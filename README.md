@@ -1,70 +1,533 @@
-# Getting Started with Create React App
+# Bloc-Notes React (Markdown Editor & Preview)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Une application de bloc-notes en React qui permet :
 
-## Available Scripts
+- de créer, modifier et supprimer des notes en Markdown
+- d’afficher en live un aperçu HTML converti depuis le Markdown
+- de réorganiser les notes (drag & drop) dans la barre latérale
+- de persister les notes dans le `localStorage` pour les retrouver au rechargement
 
-In the project directory, you can run:
+L’application est entièrement stylée en SCSS pour être responsive et proche d’un thème sombre/rouge, avec :
 
-### `npm start`
+- Sidebar (20 % largeur) pour la liste de notes
+- Éditeur Markdown (40 % largeur)
+- Preview HTML (40 % largeur)
+- Responsivité pour tablettes et mobiles via media queries SCSS
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Table des matières
 
-### `npm test`
+1. [Fonctionnalités](#fonctionnalités)
+2. [Installation et démarrage](#installation-et-démarrage)
+3. [Structure du projet](#structure-du-projet)
+4. [Détails des composants et fichiers clés](#détails-des-composants-et-fichiers-clés)
+5. [Drag & Drop dans la sidebar](#drag--drop-dans-la-sidebar)
+6. [Styles SCSS & Responsivité](#styles-scss--responsivité)
+7. [Personnalisation et extensions possibles](#personnalisation-et-extensions-possibles)
+8. [Crédits](#crédits)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Fonctionnalités
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Créer une nouvelle note** :  
+  Le bouton “Ajouter une note” dans la barre latérale crée une note “Nouvelle note” avec titre/modèle vide, et la sélectionne automatiquement.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Lister les notes** :  
+  Affiche dans la sidebar chaque note par son titre et un extrait du début de son contenu (30 caractères environ).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Sélectionner une note** :  
+  Cliquer sur une note dans la barre latérale charge son titre et son corps en Markdown dans l’éditeur.
 
-### `npm run eject`
+- **Éditeur Markdown** :
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  - `<input>` pour modifier le titre
+  - `<textarea>` pour écrire le contenu Markdown
+  - Boutons “Sauvegarder” et “Supprimer” en bas de l’éditeur
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Preview HTML live** :  
+  Convertit chaque note Markdown en HTML avec [Showdown](https://github.com/showdownjs/showdown) et l’affiche en direct dans la colonne de droite.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- **Supprimer une note** :  
+  Le bouton “Supprimer” retire la note actuellement sélectionnée de la liste, puis sélectionne la note suivante (ou affiche “Sélectionnez ou créez une note” si aucune n’existe).
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **Drag & Drop** :
 
-## Learn More
+  - Chaque item (note) de la sidebar est “draggable”.
+  - On peut faire glisser une note et la poser à l’emplacement souhaité pour réordonner la liste.
+  - L’ordre mis à jour est automatiquement enregistré dans le `localStorage`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Persistance** :
+  - Lorsqu’on crée/modifie/supprime/réorganise des notes, tout est synchronisé dans `localStorage` (clé `"notes"`).
+  - Au rechargement de la page, l’application lit `localStorage` et restaure la liste et la note sélectionnée au premier lancement (s’il y a au moins une note).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## Installation et démarrage
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+1. **Cloner le dépôt**
+   ```bash
+   git clone https://github.com/Slingod/W5D2DEV.git
+   cd bloc-notes-react
+   ```
 
-### Analyzing the Bundle Size
+### Installer les dépendances
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+L’application utilise :
 
-### Making a Progressive Web App
+React v18+
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Showdown (pour la conversion Markdown → HTML)
 
-### Advanced Configuration
+Sass (pour compiler les fichiers .scss)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+    ```bash
 
-### Deployment
+npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+````
 
-### `npm run build` fails to minify
+```bash
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+npm start
+````
+
+```bash
+
+npm run build
+
+```
+
+## Structure du projet
+
+pgsql
+Copier
+Modifier
+bloc-notes-react/
+├── node_modules/
+├── public/
+│ ├── index.html
+│ └── …
+├── src/
+│ ├── components/
+│ │ ├── MarkdownInput.js
+│ │ └── NoteDisplay.js
+│ ├── App.js
+│ ├── App.scss
+│ ├── index.js
+│ ├── index.scss
+│ ├── reportWebVitals.js
+│ └── … (tests, logos, etc.)
+├── .gitignore
+├── package.json
+├── package-lock.json (ou yarn.lock)
+└── README.md
+
+### Liens utiles pour l'exo
+
+- [React Documentation](https://reactjs.org/)
+- [Markdown Guide](https://www.markdownguide.org/)
+
+## Textes Bidon pour l'exo :
+
+# Titre de niveau 1
+
+Bienvenue dans ce document de démonstration **Markdown** !  
+Ici, tu trouveras des exemples de presque toutes les syntaxes que Markdown supporte.
+
+---
+
+## Titres et mise en forme de texte
+
+### Niveaux de titres
+
+Un titre de niveau 2
+
+## Titre de niveau 2
+
+Un titre de niveau 3
+
+### Titre de niveau 3
+
+### Texte en gras, italique et combiné
+
+- **Texte en gras**
+- _Texte en italique_
+- **_Texte en gras et italique_**
+- ~~Texte barré~~
+- **Texte en gras avec underscores**
+- _Texte en italique avec underscores_
+
+### Texte et lignes
+
+Une phrase avec un retour simple  
+Deux espaces à la fin de la ligne permettent un « saut de ligne » ici.
+
+Un **nouveau paragraphe** commence ici.
+
+---
+
+## Listes
+
+### Liste non ordonnée
+
+- Élément 1
+  - Sous-élément 1.1
+    - Sous-sous-élément 1.1.1
+  - Sous-élément 1.2
+- Élément 2
+- Élément 3
+
+### Liste ordonnée
+
+1. Premier élément
+2. Deuxième élément
+   1. Sous-élément 2.1
+   2. Sous-élément 2.2
+3. Troisième élément
+
+---
+
+## Liens et images
+
+### Lien simple
+
+- [React Documentation](https://reactjs.org/)
+- [Markdown Guide](https://www.markdownguide.org/)
+
+### Lien avec titre
+
+[OpenAI](https://openai.com “Vers le site d’OpenAI”)
+
+### Image
+
+![Logo React](https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg “Logo React”)  
+_(Tu peux remplacer cette URL par une image locale si tu préfères.)_
+
+---
+
+## Blocs de code
+
+### Code inline
+
+Voici un appel à une fonction : `const sum = (a, b) => a + b;`  
+Et un autre exemple : `console.log("Hello world");`
+
+### Bloc de code avec coloration (fenced code block)
+
+\`\`\`js
+// Exemple de code JavaScript
+function greeter(name) {
+console.log(\`Bonjour, \${name} !\`);
+}
+
+const numbers = [1, 2, 3, 4, 5];
+const squared = numbers.map((n) => n \* n);
+console.log(squared);
+\`\`\`
+
+\`\`\`python
+
+# Exemple de code Python
+
+def hello(name):
+print(f"Bonjour, {name} !")
+
+if **name** == "**main**":
+hello("Monde")
+\`\`\`
+
+### Bloc de code sans langage
+
+\`\`\`
+Ligne 1
+Ligne 2 avec indentation
+Ligne 3
+\`\`\`
+
+---
+
+## Citations
+
+> Ceci est un bloc de citation.  
+> Tu peux citer plusieurs lignes en commençant chaque ligne par “>”.
+>
+> > > Tu peux imbriquer les citations :
+> > >
+> > > > Citation imbriquée.
+
+---
+
+## Tableaux
+
+| Prénom  | Âge |         Ville |
+| :------ | :-: | ------------: |
+| Alice   | 30  |         Paris |
+| Bob     | 25  |      New York |
+| Charlie | 28  | San Francisco |
+
+> **Note** :
+>
+> - Les deux-points `:` à gauche ou à droite définissent l’alignement :
+>   - `:---` (gauche),
+>   - `:---:` (centré),
+>   - `---:` (droite).
+
+---
+
+## Règles horizontales
+
+Tu peux insérer une ligne horizontale avec :
+
+- Trois tirets :
+
+- Trois astérisques :
+
+- Trois underscores :
+
+---
+
+## Formulaires et cases à cocher (checkboxes)
+
+- [x] Tâche terminée
+- [ ] Tâche en attente
+- [ ] Tâche à faire plus tard
+
+---
+
+## Images en ligne (base64)
+
+_(Pour tester l’inclusion d’images inline, voici un petit carré rouge encodé en base64)_  
+`![Carré Rouge](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAY1BMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8NxN+vAAAALXRSTlMAAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJp2bvwAAAEhJREFUGNNNzVkSgDAQRFE0sIknWvP/ZwyDaT0IfKXWmTjncSpOZ5nYKwRnkwBZvux6RPwCOqnIfsFz0tsd+/ITYpdH6VJtraGsnz6xIlfTkUVfEKWCr730TXj2VABDXYbZQAAAABJRU5ErkJggg==`)  
+Cette image s’affichera comme un petit carré rouge.
+
+---
+
+## (Facultatif) Footnotes (si supporté par ton moteur Markdown)
+
+Ici, un exemple de note de bas de page[^1] pour tester :
+
+Le Markdown standard ne prend pas en charge toutes les variantes des “footnotes”, mais certains rendus comme **GitHub** ou **Pandoc** les supportent.
+
+[^1]: Ceci est le texte de la note de bas de page. Tu peux écrire plus long si nécessaire.
+
+---
+
+## (Facultatif) HTML brut
+
+Tu peux également inclure du HTML directement :
+
+<div style="background: #f0f0f0; padding: 10px; border-radius: 4px;">
+<strong>Ceci est un bloc HTML</strong> : il s’affiche tel quel, sans être interprété en Markdown.
+<ul>
+  <li>Item 1 en HTML</li>
+  <li>Item 2 en HTML</li>
+  <li>Item 3 en HTML</li>
+</ul>
+</div>
+
+---
+
+## Exemple final
+
+> **Titre dynamique** :  
+> Ceci conclut notre démonstration des syntaxes Markdown. Copie ce texte dans ton éditeur pour tester :
+
+```markdown
+# Titre de niveau 1
+
+Bienvenue dans ce document de démonstration **Markdown** !  
+Ici, tu trouveras des exemples de presque toutes les syntaxes que Markdown supporte.
+
+---
+
+## Titres et mise en forme de texte
+
+### Niveaux de titres
+
+Un titre de niveau 2
+
+## Titre de niveau 2
+
+Un titre de niveau 3
+
+### Titre de niveau 3
+
+### Texte en gras, italique et combiné
+
+- **Texte en gras**
+- _Texte en italique_
+- **_Texte en gras et italique_**
+- ~~Texte barré~~
+- **Texte en gras avec underscores**
+- _Texte en italique avec underscores_
+
+### Texte et lignes
+
+Une phrase avec un retour simple  
+Deux espaces à la fin de la ligne permettent un « saut de ligne » ici.
+
+Un **nouveau paragraphe** commence ici.
+
+---
+
+## Listes
+
+### Liste non ordonnée
+
+- Élément 1
+- Sous-élément 1.1
+  - Sous-sous-élément 1.1.1
+- Sous-élément 1.2
+- Élément 2
+- Élément 3
+
+### Liste ordonnée
+
+1. Premier élément
+2. Deuxième élément
+3. Sous-élément 2.1
+4. Sous-élément 2.2
+5. Troisième élément
+
+---
+
+## Liens et images
+
+### Lien simple
+
+- [React Documentation](https://reactjs.org/)
+- [Markdown Guide](https://www.markdownguide.org/)
+
+### Lien avec titre
+
+[OpenAI](https://openai.com “Vers le site d’OpenAI”)
+
+### Image
+
+![Logo React](https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg “Logo React”)  
+_(Tu peux remplacer cette URL par une image locale si tu préfères.)_
+
+---
+
+## Blocs de code
+
+### Code inline
+
+Voici un appel à une fonction : `const sum = (a, b) => a + b;`  
+Et un autre exemple : `console.log("Hello world");`
+
+### Bloc de code avec coloration (fenced code block)
+
+\`\`\`js
+// Exemple de code JavaScript
+function greeter(name) {
+console.log(\`Bonjour, \${name} !\`);
+}
+
+const numbers = [1, 2, 3, 4, 5];
+const squared = numbers.map((n) => n \* n);
+console.log(squared);
+\`\`\`
+
+\`\`\`python
+
+# Exemple de code Python
+
+def hello(name):
+print(f"Bonjour, {name} !")
+
+if **name** == "**main**":
+hello("Monde")
+\`\`\`
+
+### Bloc de code sans langage
+
+\`\`\`
+Ligne 1
+Ligne 2 avec indentation
+Ligne 3
+\`\`\`
+
+---
+
+## Citations
+
+> Ceci est un bloc de citation.  
+> Tu peux citer plusieurs lignes en commençant chaque ligne par “>”.
+>
+> > > Tu peux imbriquer les citations :
+> > >
+> > > > Citation imbriquée.
+
+---
+
+## Tableaux
+
+| Prénom  | Âge |         Ville |
+| :------ | :-: | ------------: |
+| Alice   | 30  |         Paris |
+| Bob     | 25  |      New York |
+| Charlie | 28  | San Francisco |
+
+> **Note** :
+>
+> - Les deux-points `:` à gauche ou à droite définissent l’alignement :
+>   - `:---` (gauche),
+>   - `:---:` (centré),
+>   - `---:` (droite).
+
+---
+
+## Règles horizontales
+
+Tu peux insérer une ligne horizontale avec :
+
+- Trois tirets :
+
+- Trois astérisques :
+
+- Trois underscores :
+
+---
+
+## Formulaires et cases à cocher (checkboxes)
+
+- [x] Tâche terminée
+- [ ] Tâche en attente
+- [ ] Tâche à faire plus tard
+
+---
+
+## Images en ligne (base64)
+
+_(Pour tester l’inclusion d’images inline, voici un petit carré rouge encodé en base64)_  
+`![Carré Rouge](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAY1BMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8NxN+vAAAALXRSTlMAAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJp2bvwAAAEhJREFUGNNNzVkSgDAQRFE0sIknWvP/ZwyDaT0IfKXWmTjncSpOZ5nYKwRnkwBZvux6RPwCOqnIfsFz0tsd+/ITYpdH6VJtraGsnz6xIlfTkUVfEKWCr730TXj2VABDXYbZQAAAABJRU5ErkJggg==`)  
+Cette image s’affichera comme un petit carré rouge.
+
+---
+
+## (Facultatif) Footnotes (si supporté par ton moteur Markdown)
+
+Ici, un exemple de note de bas de page[^1] pour tester :
+
+Le Markdown standard ne prend pas en charge toutes les variantes des “footnotes”, mais certains rendus comme **GitHub** ou **Pandoc** les supportent.
+
+[^1]: Ceci est le texte de la note de bas de page. Tu peux écrire plus long si nécessaire.
+
+---
+
+## (Facultatif) HTML brut
+
+Tu peux également inclure du HTML directement :
+
+<div style="background: #f0f0f0; padding: 10px; border-radius: 4px;">
+<strong>Ceci est un bloc HTML</strong> : il s’affiche tel quel, sans être interprété en Markdown.
+<ul>
+  <li>Item 1 en HTML</li>
+  <li>Item 2 en HTML</li>
+  <li>Item 3 en HTML</li>
+</ul>
+</div>
+```

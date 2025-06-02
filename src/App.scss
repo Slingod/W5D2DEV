@@ -1,0 +1,199 @@
+$color-bg-sidebar:   #1e1e1e;
+$color-bg-editor:    #2e2e2e;
+$color-bg-preview:   #424242;
+$color-bg-textarea:  #121212;
+$color-accent:       #e53935;
+$color-muted:        #555;
+$color-hover:        #333;
+$color-text-light:   #ffffff;
+
+$width-sidebar:  20%;
+$width-editor:   40%;
+$width-preview:  40%;
+
+$breakpoint-sm:  800px;
+
+@mixin flex-center($dir: row, $justify: flex-start, $align: stretch) {
+  display:         flex;
+  flex-direction:  $dir;
+  justify-content: $justify;
+  align-items:     $align;
+}
+
+.container {
+  @include flex-center(row);
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: $width-sidebar;
+  background: $color-bg-sidebar;
+  color: $color-text-light;
+  padding: 1rem;
+  box-sizing: border-box;
+
+  .btn-new {
+    background: $color-accent;
+    color: $color-text-light;
+    border: none;
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+
+    &:hover {
+      background: darken($color-accent, 5%);
+    }
+  }
+
+  .note-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+  }
+  .note-list li {
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+
+    &:hover {
+      background: $color-hover;
+    }
+
+    &.active {
+      background: $color-hover;
+    }
+
+    h4 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1rem;
+      color: $color-accent;
+    }
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: lighten($color-text-light, 30%);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.editor {
+  width: $width-editor;
+  background: $color-bg-editor;
+  color: $color-text-light;
+  padding: 1rem;
+  box-sizing: border-box;
+  @include flex-center(column, flex-start, stretch);
+
+  .title-input {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background: $color-bg-textarea;
+    color: $color-text-light;
+    border: 1px solid darken($color-bg-textarea, 10%);
+    border-radius: 4px;
+
+    &::placeholder {
+      color: lighten($color-text-light, 40%);
+    }
+  }
+
+  .body-input {
+    flex: 1;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background: $color-bg-textarea;
+    color: $color-text-light;
+    border: 1px solid darken($color-bg-textarea, 10%);
+    border-radius: 4px;
+    resize: none;
+  }
+
+  .editor-buttons {
+    @include flex-center(row, flex-start, center);
+    gap: 0.5rem;
+
+    .btn-save {
+      background: $color-accent;
+      border: none;
+      color: $color-text-light;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+
+      &:hover {
+        background: darken($color-accent, 5%);
+      }
+    }
+    .btn-delete {
+      background: $color-muted;
+      border: none;
+      color: $color-text-light;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+
+      &:hover {
+        background: lighten($color-muted, 10%);
+      }
+    }
+  }
+}
+
+.preview {
+  width: $width-preview;
+  padding: 1rem;
+  background: $color-bg-preview;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  h1 {
+    color: $color-accent;
+    margin: 0 0 1rem 0;
+  }
+  h2, h3, h4, h5 {
+    color: $color-accent;
+    margin: 0 0 1rem 0;
+  }
+  p {
+    color: $color-text-light;
+    margin: 0 0 1rem 0;
+  }
+  ul, ol {
+    color: $color-text-light;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-bottom: 0;
+  }
+
+  .editor {
+    width: 100%;
+    min-height: 300px;
+  }
+
+  .preview {
+    width: 100%;
+    flex: none;
+    height: auto;
+    margin-top: 1rem;
+  }
+}
