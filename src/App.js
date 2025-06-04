@@ -4,15 +4,15 @@ import './App.scss';
 
 class App extends React.Component {
   state = {
-    notes: [],          // tableau de notes { id, title, body }
-    selectedId: null,   // id de la note sélectionnée
+    notes: [],
+    selectedId: null,
     draftTitle: '',
     draftBody: ''
   };
 
   converter = new Showdown.Converter();
 
-  // Id de la note en cours de glisser (drag)
+  // Drag n' Drop
   draggedId = null;
 
   componentDidMount() {
@@ -81,14 +81,12 @@ class App extends React.Component {
   handleTitleChange = (e) => this.setState({ draftTitle: e.target.value });
   handleBodyChange = (e) => this.setState({ draftBody: e.target.value });
 
-  // Méthodes de Drag & Drop pour la sidebar     //
-
   // Quand le drag commence, on mémorise l'id de la note qu'on déplace
   handleDragStart = (event, id) => {
     this.draggedId = id;
     // Pour Firefox : il faut mettre un dataTransfer même vide
     event.dataTransfer.setData('text/plain', '');
-    // Optionnel : on peut réduire l'opacité de l'élément source
+
     event.currentTarget.style.opacity = '0.5';
   };
 
